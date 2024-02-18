@@ -27,6 +27,8 @@ export class CoursesCardListComponent implements OnInit {
 
     editCourse(course:Course) {
 
+        console.log("USER CLICKED")
+
         const dialogConfig = defaultDialogConfig();
 
         dialogConfig.data = {
