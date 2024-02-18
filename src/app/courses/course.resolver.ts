@@ -3,20 +3,42 @@ import { CoursesHttpService } from "./services/courses-http.service";
 import { Observable } from "rxjs";
 import { Course } from "./model/course";
 import { Injectable, inject } from "@angular/core";
+import { CourseEntityService } from "./services/course-entity-service";
+import { filter, first, map, tap } from "rxjs/operators";
 
 
-@Injectable()
+@Injectable({
+    providedIn: "any"
+})
 export class CourseResolverService {
-    constructor(private courseHttpService: CoursesHttpService) {
+
+    constructor(private courseEntityService: CourseEntityService) {
 
     }
 
-    loadCourses(): Observable<Course[]> {
-        return this.courseHttpService.findAllCourses().pipe()
+    //using map to convert Observable<Course[]> to Observable<boolean>
+    // loadCourses(): Observable<boolean> {
+    //     return this.courseEntityService.getAll().
+    //     pipe(
+    //         map(courses => !!courses)
+    //     )
+    // }
+
+    resolve(): Observable<boolean> {
+        return this.courseEntityService.loaded$
+        .pipe(
+            tap(loaded => {
+                if(!loaded) {
+                    this.courseEntityService.getAll()
+                }
+            }),
+            filter(loaded => !!loaded),
+            first()
+        )
     }
 
 }
 
-export const courseResolver: ResolveFn = (route: ActivatedRouteSnapshot,state: RouterStateSnapshot): Observable<boolean> => {
-    return inject(CourseResolverService).loadCourses();
+export const courseResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot,state: RouterStateSnapshot): Observable<any> => {
+    return inject(CourseResolverService).resolve();
 }

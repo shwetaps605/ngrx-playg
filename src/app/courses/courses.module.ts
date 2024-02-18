@@ -21,23 +21,33 @@ import {MatCardModule} from '@angular/material/card';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 import {RouterModule, Routes} from '@angular/router';
-import { EntityDefinitionService, EntityMetadataMap } from '@ngrx/data';
+import { EntityDataService, EntityDefinitionService, EntityMetadataMap } from '@ngrx/data';
+import { courseResolver } from './course.resolver';
+import { CoursesDataService } from './services/courses-data-service';
+import { compareCourses } from './model/course';
 
 
 export const coursesRoutes: Routes = [
   {
     path: '',
-    component: HomeComponent
+    component: HomeComponent,
+    resolve: {
+      courses: courseResolver
+    }
 
   },
   {
     path: ':courseUrl',
-    component: CourseComponent
+    component: CourseComponent,
+    resolve: {
+      courses: courseResolver
+    }
   }
 ];
 
 const entityMetadata: EntityMetadataMap = {
   Course: {
+    sortComparer: compareCourses
     
   }
 }
@@ -76,13 +86,17 @@ const entityMetadata: EntityMetadataMap = {
     CourseComponent
   ],
   providers: [
+    CoursesDataService,
     CoursesHttpService
   ]
 })
 export class CoursesModule {
 
-  constructor(private eds: EntityDefinitionService) {
+  constructor(private eds: EntityDefinitionService,
+    private entityDataService: EntityDataService,
+    private courseDataService: CoursesDataService) {
     eds.registerMetadataMap(entityMetadata);
+    entityDataService.registerService('Course',courseDataService)
   }
 
 
