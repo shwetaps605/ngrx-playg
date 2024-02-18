@@ -21,10 +21,7 @@ import {MatCardModule} from '@angular/material/card';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 import {RouterModule, Routes} from '@angular/router';
-import { EntityDataService, EntityDefinitionService, EntityMetadataMap} from '@ngrx/data';
-import {compareCourses, Course} from './model/course';
-
-import {compareLessons, Lesson} from './model/lesson';
+import { EntityDefinitionService, EntityMetadataMap } from '@ngrx/data';
 
 
 export const coursesRoutes: Routes = [
@@ -38,6 +35,13 @@ export const coursesRoutes: Routes = [
     component: CourseComponent
   }
 ];
+
+const entityMetadata: EntityMetadataMap = {
+  Course: {
+    
+  }
+}
+
 
 @NgModule({
   imports: [
@@ -57,7 +61,7 @@ export const coursesRoutes: Routes = [
     MatDatepickerModule,
     MatMomentDateModule,
     ReactiveFormsModule,
-    RouterModule.forChild(coursesRoutes)
+    RouterModule.forChild(coursesRoutes)  
   ],
   declarations: [
     HomeComponent,
@@ -77,8 +81,8 @@ export const coursesRoutes: Routes = [
 })
 export class CoursesModule {
 
-  constructor() {
-
+  constructor(private eds: EntityDefinitionService) {
+    eds.registerMetadataMap(entityMetadata);
   }
 
 
