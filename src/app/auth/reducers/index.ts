@@ -34,7 +34,5 @@ export const authReducer = createReducer(
         }
     })
 
-
-
 );
 
